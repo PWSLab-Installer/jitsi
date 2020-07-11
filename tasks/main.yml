@@ -59,12 +59,12 @@
 
 - name: Give executable permissions to File
   file:
-    path: video_configuration.sh
+    path: ~/video_configuration.sh
     mode: '0755'
 
 - name: Give executable permissions to File
   file:
-    path: https_enable.sh
+    path: ~/https_enable.sh
     mode: '0755'
 
   
