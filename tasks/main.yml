@@ -1,84 +1,70 @@
 ---
-
-- hosts: localhost
-  connection: local
-  # vars:
       
-  #     - version: 1.12.1
-  #     - mysql_databases: 
-  #       - name: gitea
-  #     - mysql_users: 
-  #       - name: gitea
-  #         password: gitea
+- pause:
+      prompt: "The hostname of the current installation"
+      echo: yes
+  register: hostname_result
 
-  tasks:
-      
-    - pause:
-          prompt: "The hostname of the current installation"
-          echo: yes
-      register: hostname_result
+# - pause:
+#       prompt: "Enter your email"
+#       echo: yes
+#   register: email_result
 
-    # - pause:
-    #       prompt: "Enter your email"
-    #       echo: yes
-    #   register: email_result
+- set_fact:
+        hostname_result: "{{ hostname_result.user_input }}"
+        # email_result: "{{ email_result.user_input }}"
 
-    - set_fact:
-            hostname_result: "{{ hostname_result.user_input }}"
-            # email_result: "{{ email_result.user_input }}"
+- name: Set Hostname
+  hostname:
+    name: "{{ hostname_result }}"
 
-    - name: Set Hostname
-      hostname:
-        name: "{{ hostname_result }}"
+- name: Allow all access to tcp port {{ item }}
+  ufw:
+    rule: allow
+    port: '{{ item }}'
+    proto: tcp
+  loop:
+    - 80
+    - 443
+    - 4443
 
-    - name: Allow all access to tcp port {{ item }}
-      ufw:
-        rule: allow
-        port: '{{ item }}'
-        proto: tcp
-      loop:
-        - 80
-        - 443
-        - 4443
+- name: Allow all access to UDP port 10000
+  ufw:
+    rule: allow
+    port: '10000'
+    proto: udp
 
-    - name: Allow all access to UDP port 10000
-      ufw:
-        rule: allow
-        port: '10000'
-        proto: udp
+- name: Add an Apt signing key, uses whichever key is at the URL
+  apt_key:
+    url: https://download.jitsi.org/jitsi-key.gpg.key
+    state: present
 
-    - name: Add an Apt signing key, uses whichever key is at the URL
-      apt_key:
-        url: https://download.jitsi.org/jitsi-key.gpg.key
-        state: present
-
-    - name: Add Repo
-      apt_repository:
-        repo: deb https://download.jitsi.org stable/
-        state: present
-        update_cache: yes
-        filename: 'jitsi-stable'
+- name: Add Repo
+  apt_repository:
+    repo: deb https://download.jitsi.org stable/
+    state: present
+    update_cache: yes
+    filename: 'jitsi-stable'
 
 
-    - name: Sets Video Config file
-      template:
-        src: "video_configuration.sh"
-        dest: "~/"
+- name: Sets Video Config file
+  template:
+    src: "video_configuration.sh"
+    dest: "~/"
 
-    - name: Sets HTTPS Config file
-      template:
-        src: "https_enable.sh"
-        dest: "~/"
+- name: Sets HTTPS Config file
+  template:
+    src: "https_enable.sh"
+    dest: "~/"
 
-    - name: Give executable permissions to File
-      file:
-        path: video_configuration.sh
-        mode: '0755'
+- name: Give executable permissions to File
+  file:
+    path: video_configuration.sh
+    mode: '0755'
 
-    - name: Give executable permissions to File
-      file:
-        path: https_enable.sh
-        mode: '0755'
+- name: Give executable permissions to File
+  file:
+    path: https_enable.sh
+    mode: '0755'
 
-      
-    
+  

@@ -3,9 +3,9 @@
 
   tasks:
       
-    - name: Fetch WordPress Lemp Role
+    - name: Fetch Jitsi Role
       git:
-        repo: https://ro:hBsT-FmxtXp-zeRt8Dq4@pwslab.org/ansible/wordpress-jitsi.git
+        repo: https://ro:hBsT-FmxtXp-zeRt8Dq4@pwslab.org/ansible/jitsi-playbook.git
         dest: /root/.ansible/roles/pwslab.jitsi
         version: master
         force: yes
