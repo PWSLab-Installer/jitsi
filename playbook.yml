@@ -1,0 +1,16 @@
+- hosts: localhost
+  connection: local
+
+  tasks:
+      
+    - name: Fetch WordPress Lemp Role
+      git:
+        repo: https://ro:hBsT-FmxtXp-zeRt8Dq4@pwslab.org/ansible/wordpress-jitsi.git
+        dest: /root/.ansible/roles/pwslab.jitsi
+        version: master
+        force: yes
+
+
+    - name: Installing Jitsi
+      include_role:
+        name: pwslab.jitsi
