@@ -1,5 +1,16 @@
 ---
-      
+   
+- name: Check the version of CentOS
+  command: cat /etc/centos-release
+  register: cent_os
+  ignore_errors: yes
+
+- name: Check the version of Ubuntu
+  shell: |
+    lsb_release -d
+  register: ubuntu_os
+  ignore_errors: yes  
+
 - pause:
       prompt: "The hostname of the current installation"
       echo: yes
@@ -38,6 +49,8 @@
   apt_key:
     url: https://download.jitsi.org/jitsi-key.gpg.key
     state: present
+  when:
+        - ubuntu_os.stdout | regex_search("Ubuntu")
 
 - name: Add Repo
   apt_repository:
@@ -45,6 +58,8 @@
     state: present
     update_cache: yes
     filename: 'jitsi-stable'
+  when:
+        - ubuntu_os.stdout | regex_search("Ubuntu")
 
 
 - name: Sets Video Config file
